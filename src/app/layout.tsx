@@ -1,14 +1,11 @@
 import "@/styles/globals.css";
-import { Inter as FontSans } from "next/font/google";
+import { fontSans } from "@/lib/fonts";
 
 import { cn } from "@/lib/utils";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+
 
 export default function RootLayout({
   children,
