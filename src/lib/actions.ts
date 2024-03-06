@@ -5,14 +5,15 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(formData: FormData) {
+import { z } from "zod";
+import { loginFormSchema } from "./schema";
+
+export async function login(formData: z.infer<typeof loginFormSchema>) {
   const supabase = createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+    email: formData.email,
+    password: formData.password
   }
 
   const { error } = await supabase.auth.signInWithPassword(data);
