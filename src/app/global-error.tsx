@@ -17,7 +17,6 @@ export default function Error({ error, reset}: ErrorProps) {
             console.clear();
             reset();
           }}
-          className="w-1/4"
         >
           Try again
         </Button>
