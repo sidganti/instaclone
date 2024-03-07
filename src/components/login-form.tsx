@@ -28,6 +28,7 @@ import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<any>();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -39,7 +40,15 @@ export default function LoginForm() {
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     setLoading(true);
-    await login(data);
+    try {
+      await login(data);
+    } catch (error) {
+      setServerError(error);
+    }
+  }
+
+  if(serverError) {
+    throw serverError;
   }
 
   return (
