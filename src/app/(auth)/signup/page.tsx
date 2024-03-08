@@ -1,5 +1,5 @@
 import AccountCardWrapper from "@/components/account-card-wrapper";
-import LoginForm from "@/components/login-form";
+import SignupForm from "@/components/signup-form";
 import { Instagram } from "lucide-react";
 
 export default function Page() {
@@ -10,9 +10,9 @@ export default function Page() {
           <Instagram className="mr-2 h-8 w-8" /> Instaclone
         </>
       }
-      description="Login to your account"
+      description="Create an account"
     >
-      <LoginForm />
+      <SignupForm />
     </AccountCardWrapper>
   );
 }

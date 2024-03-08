@@ -1,25 +1,17 @@
-import { Button } from "@/components/ui/button";
-
-//
-
+import { createClient } from "@/utils/supabase/server";
+import { logout } from "@/lib/actions";
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/utils/supabase/server";
+import { Button } from "@/components/ui/button";
 
-import { logout } from "@/lib/actions";
-
-//
 
 export default async function Home() {
+  const supabase = createClient();
 
-  //
-  const supabase = createClient()
-
-  const { data, error } = await supabase.auth.getUser()
+  const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user) {
-    redirect('/login')
+    redirect('/signup');
   }
-  //
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

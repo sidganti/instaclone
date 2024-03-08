@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
 import { z } from "zod";
-import { loginFormSchema } from "./schema";
+import { loginFormSchema, signupFormSchema } from "./schema";
 
 export async function login(formData: z.infer<typeof loginFormSchema>) {
   const supabase = createClient();
@@ -26,20 +26,20 @@ export async function login(formData: z.infer<typeof loginFormSchema>) {
   redirect('/');
 }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: z.infer<typeof signupFormSchema>) {
   const supabase = createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+    fullname: formData.fullname,
+    username: formData.username,
+    email: formData.email,
+    password: formData.password,
   }
 
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    redirect('/error');
+    throw error;
   }
 
   revalidatePath('/', 'layout');
