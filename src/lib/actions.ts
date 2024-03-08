@@ -19,7 +19,7 @@ export async function login(formData: z.infer<typeof loginFormSchema>) {
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
-    throw error;
+    return error;
   }
 
   revalidatePath('/', 'layout');
@@ -39,7 +39,7 @@ export async function signup(formData: z.infer<typeof signupFormSchema>) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    throw error;
+    return error;
   }
 
   revalidatePath('/', 'layout');

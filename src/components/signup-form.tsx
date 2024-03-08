@@ -1,6 +1,7 @@
 "use client"
 
 import { signup } from "@/lib/actions";
+import { AuthError } from "@supabase/supabase-js";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,15 +43,14 @@ export default function SignupForm() {
 
   const onSubmit = async (data: z.infer<typeof signupFormSchema>) => {
     setLoading(true);
-    try {
-      await signup(data);
-    } catch (error) {
+    const error = await signup(data);
+    if (error) {
       setServerError(error);
     }
   }
 
   if (serverError) {
-    throw serverError;
+    throw new AuthError(`${serverError.status}: ${serverError.message}`);;
   }
 
   return (
@@ -149,5 +149,5 @@ export default function SignupForm() {
         </CardFooter>
       </form>
     </Form>
-  )
+  );
 }
