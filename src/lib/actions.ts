@@ -19,7 +19,11 @@ export async function login(formData: z.infer<typeof loginFormSchema>) {
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
-    return error;
+    return {
+      name: error.name,
+      status: error.status,
+      message: error.message
+    }
   }
 
   revalidatePath('/', 'layout');
@@ -30,10 +34,15 @@ export async function signup(formData: z.infer<typeof signupFormSchema>) {
   const supabase = createClient();
 
   const data = {
-    fullname: formData.fullname,
-    username: formData.username,
     email: formData.email,
     password: formData.password,
+    options: {
+      data: {
+        username: formData.username,
+        email: formData.email,
+        fullname: formData.fullname
+      }
+    }
   }
 
   const { error } = await supabase.auth.signUp(data);

@@ -1,7 +1,6 @@
 "use client";
 
 import { login } from "@/lib/actions";
-import { AuthError } from "@supabase/supabase-js";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +28,6 @@ import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState<any>();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -38,17 +36,20 @@ export default function LoginForm() {
         password: ""
       }
   });
+  const { setError, formState: { errors }} = form;
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     setLoading(true);
     const error = await login(data);
-    if (error) {
-      setServerError(error);
-    }
-  }
 
-  if(serverError) {
-    throw new AuthError(`${serverError.status}: ${serverError.message}`);
+    if (error) {
+      setError("root.serverError", {
+        type: error.status?.toString(),
+        message: error.message
+      });
+
+      setLoading(false);
+    }
   }
 
   return (
@@ -64,7 +65,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input
                     placeholder="Email"
-                    type="text"
+                    type="email"
                     disabled={loading}
                     {...field}
                   />
@@ -91,6 +92,9 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          {errors && errors.root &&
+            <p className="font-medium text-destructive text-xs">{errors.root.serverError.message}</p>
+          }
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button

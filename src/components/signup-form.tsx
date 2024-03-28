@@ -102,7 +102,7 @@ export default function SignupForm() {
                 <FormControl>
                   <Input
                     placeholder="Email"
-                    type="text"
+                    type="email"
                     disabled={loading}
                     {...field}
                   />
