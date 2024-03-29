@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "./ui/password-input";
 import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
@@ -81,9 +82,8 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordInput
                     placeholder="Password"
-                    type="password"
                     disabled={loading}
                     {...field}
                   />
