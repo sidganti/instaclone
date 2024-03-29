@@ -48,7 +48,11 @@ export async function signup(formData: z.infer<typeof signupFormSchema>) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    return error;
+    return {
+      name: error.name,
+      status: error.status,
+      message: error.message
+    }
   }
 
   revalidatePath('/', 'layout');

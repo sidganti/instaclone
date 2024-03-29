@@ -1,7 +1,6 @@
-"use client"
+"use client";
 
 import { signup } from "@/lib/actions";
-import { AuthError } from "@supabase/supabase-js";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +28,6 @@ import { Loader2 } from "lucide-react";
 
 export default function SignupForm() {
   const [loading, setLoading] = useState(false);
-  const [serverError, setServerError] = useState<any>();
 
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
@@ -40,17 +38,33 @@ export default function SignupForm() {
       password: ""
     }
   });
+  const { setError, formState: { errors }} = form;
 
   const onSubmit = async (data: z.infer<typeof signupFormSchema>) => {
     setLoading(true);
     const error = await signup(data);
-    if (error) {
-      setServerError(error);
-    }
-  }
 
-  if (serverError) {
-    throw new AuthError(`${serverError.status}: ${serverError.message}`);;
+    if (error) {
+      if (error.status === 400) {
+        setError("email", {
+          type: error.status?.toString(),
+          message: "Email is already associated with another account"
+        });
+      }
+      else if (error.status === 500) {
+        setError("username", {
+          type: error.status?.toString(),
+          message: "Username is already taken"
+        });
+      }
+      else {
+        setError("root.serverError", {
+          type: error.status?.toString(),
+          message: error.message
+        });
+      }
+      setLoading(false);
+    }
   }
 
   return (
@@ -129,6 +143,9 @@ export default function SignupForm() {
               </FormItem>
             )}
           />
+          {errors && errors.root &&
+            <p className="font-medium text-destructive text-xs">{errors.root.serverError.message}</p>
+          }
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button
