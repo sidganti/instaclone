@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "@/lib/schema";
 
 import { useState } from "react";
-import Link from "next/link";
 
 import {
   Form,
@@ -18,10 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  CardContent,
-  CardFooter
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "./ui/password-input";
@@ -56,7 +51,7 @@ export default function LoginForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <CardContent className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <FormField
             control={form.control}
             name="email"
@@ -95,8 +90,6 @@ export default function LoginForm() {
           {errors && errors.root &&
             <p className="font-medium text-destructive text-xs">{errors.root.serverError.message}</p>
           }
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
           <Button
             className="w-full"
             disabled={loading}
@@ -106,13 +99,7 @@ export default function LoginForm() {
               <Loader2 className="ml-2 h-4 w-4 animate-spin" />
             }
           </Button>
-          <span className="text-sm">
-            Dont have an account?
-            <Button variant={"link"}>
-              <Link href="/signup">Sign up</Link>
-            </Button>
-          </span>
-        </CardFooter>
+        </div>
       </form>
     </Form>
   );

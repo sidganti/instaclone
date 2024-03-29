@@ -8,7 +8,8 @@ interface ErrorProps {
 }
 
 interface AccountCardWrapperProps {
-  title: string | React.ReactNode
+  header: string | React.ReactNode
   description: string | React.ReactNode
   children: React.ReactNode
+  footer: string | React.ReactNode
 }
