@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "./ui/password-input";
 import { Loader2 } from "lucide-react";
 
 export default function SignupForm() {
@@ -30,7 +31,8 @@ export default function SignupForm() {
       fullname: "",
       username: "",
       email: "",
-      password: ""
+      password: "",
+      confirmPassword: ""
     }
   });
   const { setError, formState: { errors }} = form;
@@ -127,9 +129,8 @@ export default function SignupForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordInput
                     placeholder="Password"
-                    type="password"
                     disabled={loading}
                     {...field}
                   />
@@ -138,6 +139,24 @@ export default function SignupForm() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({field}) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <PasswordInput
+                    placeholder="Password"
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <br />
           {errors && errors.root &&
             <p className="font-medium text-destructive text-xs">{errors.root.serverError.message}</p>
           }

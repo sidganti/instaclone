@@ -39,10 +39,18 @@ export default function LoginForm() {
     const error = await login(data);
 
     if (error) {
-      setError("root.serverError", {
-        type: error.status?.toString(),
-        message: error.message
-      });
+      if (error.status === 400) {
+        setError("root.serverError", {
+          type: error.status?.toString(),
+          message: "Incorrect email or password"
+        });
+      }
+      else {
+        setError("root.serverError", {
+          type: error.status?.toString(),
+          message: error.message
+        });
+      }
 
       setLoading(false);
     }
@@ -87,6 +95,7 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          <br />
           {errors && errors.root &&
             <p className="font-medium text-destructive text-xs">{errors.root.serverError.message}</p>
           }
