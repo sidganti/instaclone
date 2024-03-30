@@ -16,9 +16,12 @@ export default function Page() {
       footer={
         <span className="text-sm">
           Already have an account?
-          <Button variant={"link"}>
+          {/* <Button variant={"link"}>
             <Link href="/login">Login</Link>
-          </Button>
+          </Button> */}
+          <Link href="/login">
+            <Button variant={"link"}>Login</Button>
+          </Link>
         </span>
       }
     >
