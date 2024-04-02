@@ -1,4 +1,4 @@
-interface RootLayoutProps {
+interface LayoutProps {
   children: React.ReactNode
 }
 
