@@ -1,10 +1,16 @@
 "use client";
 
+import { User } from "@supabase/supabase-js";
+
 import { logout } from "@/lib/actions";
 
 import { useTheme } from "next-themes";
 import NextLink from "next/link";
+import { useState, useEffect } from "react";
 
+import { useProfiles } from "@/hooks/useProfiles";
+
+import { Skeleton } from "./ui/skeleton";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -29,27 +35,57 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
   Instagram,
-  User,
+  UserIcon,
   SunMoon,
   Sun,
   Moon,
-  LogOut
+  LogOut,
+  Loader2
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cx } from "class-variance-authority";
 
-const Link = ({ children, href, ...props }: { children: React.ReactNode, href: string | any}) => {
+const Link = ({ children, href, disabled=false, ...props }: { children: React.ReactNode, href: string, disabled?: boolean}) => {
   return (
-    <NextLink href={href} legacyBehavior passHref>
-      <NavigationMenuLink className={cn(buttonVariants({ variant: "link" }))}>
+    <NextLink
+      href={href}
+      legacyBehavior
+      passHref
+      {...props}
+    >
+      <NavigationMenuLink
+        className={cx(buttonVariants({ variant: "link" }), disabled ? "pointer-events-none text-muted" : "")}
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : undefined}
+        {...props}
+      >
         {children}
       </NavigationMenuLink>
     </NextLink>
   );
 };
 
-export default function Navbar() {
+function DropdownTriggerSkeleton() {
+  return (
+    <div className="space-y-2">
+      <Skeleton className="h-2 w-[75px]" />
+      <Skeleton className="h-2 w-[100px]" />
+    </div>
+  );
+}
+
+export default function Navbar( data: {
+  user: User;
+}) {
+  const [loading, setLoading] = useState(false);
+
   const { setTheme } = useTheme();
+
+  const { loadingProfiles, authenticatedProfile, getAuthenticatedProfile } = useProfiles();
+
+  useEffect(() => {
+    const error = getAuthenticatedProfile(data.user.id);
+  }, []);
 
   return (
     <>
@@ -83,12 +119,15 @@ export default function Navbar() {
             <Button variant={"ghost"}>
               <Avatar className="mr-2 h-8 w-8">
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback><UserIcon /></AvatarFallback>
               </Avatar>
-              <div className="flex flex-col text-xs">
-                <span>@shadcn</span>
-                <span>Shad CN</span>
-              </div>
+              {loadingProfiles
+                ? <DropdownTriggerSkeleton />
+                : <div className="flex flex-col text-xs text-left">
+                    <span>@{authenticatedProfile?.username}</span>
+                    <span>{authenticatedProfile?.fullname}</span>
+                  </div>
+              }
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -97,7 +136,7 @@ export default function Navbar() {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <NextLink href="/profile" className="flex items-center">
-                  <User className="mr-2 h-4 w-4" />
+                  <UserIcon className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </NextLink>
               </DropdownMenuItem>
@@ -126,9 +165,23 @@ export default function Navbar() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => {logout()}}>
+              <DropdownMenuItem className="cursor-pointer" onClick={async () => {
+                setLoading(true);
+
+                const error = await logout();
+                if (error) {
+                  throw new Error(`${error.status} ${error.name}: ${error.message}`);
+                }
+
+                setLoading(false);
+              }}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Logout</span>
+                <span className="flex items-center">
+                  Logout
+                  { loading &&
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  }
+                </span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

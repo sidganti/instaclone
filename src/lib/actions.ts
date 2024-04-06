@@ -8,6 +8,8 @@ import { createClient } from "@/utils/supabase/server";
 import { z } from "zod";
 import { loginFormSchema, signupFormSchema } from "./schema";
 
+/* AUTH ACTIONS */
+
 export async function login(formData: z.infer<typeof loginFormSchema>) {
   const supabase = createClient();
 
@@ -65,7 +67,11 @@ export async function logout() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    redirect('/error');
+    return {
+      name: error.name,
+      status: error.status,
+      message: error.message
+    }
   }
 
   revalidatePath('/', 'layout');
